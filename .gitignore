@@ -1,0 +1,6 @@
+# IDE
+.idea
+*.iml
+.DS_Store
+*.tfstate
+*.tfstate.backup
