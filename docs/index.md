@@ -70,31 +70,31 @@ SkillHub 社区版在计算巢部署的费用主要涉及：
 
 - 更新 CLAWHUB_REGISTRY 环境变量
 
-shell 环境依次执行如下命令即可
-```
-# 编辑 ~/.bashrc
-echo 'export CLAWHUB_REGISTRY=http://114.55.168.250' >> ~/.bashrc
-
-# 立即生效
-source ~/.bashrc
-
-# 验证
-echo $CLAWHUB_REGISTRY
-```
-
-注意：上述的 "export CLAWHUB_REGISTRY=http://114.55.168.250"，该内容取自 SkillHub 服务实例详情页的红框部分，实际配置时需按对应服务实例详情页面显示的内容，进行替换。
-![图例](claw_inte.jpg)
+    shell 环境依次执行如下命令即可
+    ```
+    # 编辑 ~/.bashrc
+    echo 'export CLAWHUB_REGISTRY=http://114.55.168.250' >> ~/.bashrc
+    
+    # 立即生效
+    source ~/.bashrc
+    
+    # 验证
+    echo $CLAWHUB_REGISTRY
+    ```
+    
+    注意：上述的 "export CLAWHUB_REGISTRY=http://114.55.168.250"，该内容取自 SkillHub 服务实例详情页的红框部分，实际配置时需按对应服务实例详情页面显示的内容，进行替换。
+    ![图例](claw_inte.jpg)
 
 - 查询并安装 skill
 
-以查询 Git 关键字的 skill，并安装 git-operations skill 为例，shell 环境依次执行如下命令即可，
-```
-# 搜索 Git 相关技能
-npx clawhub search git
-
-# 查看详细信息
-npx clawhub info git-operations
-
-# 安装单个技能
-npx clawhub install git-operations
-```
+    以查询 Git 关键字的 skill，并安装 git-operations skill 为例，shell 环境依次执行如下命令即可，
+    ```
+    # 搜索 Git 相关技能
+    npx clawhub search git
+    
+    # 查看详细信息
+    npx clawhub info git-operations
+    
+    # 安装单个技能
+    npx clawhub install git-operations
+    ```
