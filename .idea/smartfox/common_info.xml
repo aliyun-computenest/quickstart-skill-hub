@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SmartFoxWorkToolsProjectState">
+    <option name="branch" value="main" />
+    <option name="gitUrl" value="https://github.com/aliyun-computenest/quickstart-skill-hub.git" />
+    <option name="localBranch" value="main" />
+    <option name="revision" value="7b7a7207d8ae43183c7fc96566731c85bb6ea106" />
+  </component>
+</project>

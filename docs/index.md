@@ -1,131 +1,100 @@
-# Demo服务实例部署文档
-
 ## 概述
 
-`(服务概述内容)`。
+SkillHub 是一个企业级 Agent Skill 注册中心，它建立在科大讯飞开源产品 [skillhub](https://github.com/iflytek/skillhub/tree/main) 基础之上，可用于发布、发现、管理可复用的 SKILL。
 
-```
-eg：
+本方式提供部署单机版 SkillHub 的解决方案，其底层通过 Docker Compose 快速部署 skillhub, 此种部署方式不具备高可用、可伸缩的特性，不适合生产环境下使用，推荐用于开发测试。
 
-Demo服务是计算巢提供的示例。
-本文向您介绍如何开通计算巢上的`Demo`服务，以及部署流程和使用说明。
-```
+## 前提条件
+部署 SkillHub 社区版服务实例，需要对部分阿里云资源进行访问和创建操作。因此您的账号需要包含如下资源的权限。
+
+**说明**：当您的账号是RAM账号时，才需要添加此权限。
+
+| 权限策略名称                          | 备注                     |
+|---------------------------------|------------------------|
+| AliyunECSFullAccess             | 管理云服务器服务（ECS）的权限       |
+| AliyunVPCFullAccess             | 管理专有网络（VPC）的权限         |
+| AliyunROSFullAccess             | 管理资源编排服务（ROS）的权限       |
+| AliyunComputeNestUserFullAccess | 管理计算巢服务（ComputeNest）的用户侧权限 |
 
 ## 计费说明
 
-`(计费说明内容)`
-
-```
-eg:
-
-Demo在计算巢上的费用主要涉及：
+SkillHub 社区版在计算巢部署的费用主要涉及：
 
 - 所选vCPU与内存规格
-- 系统盘类型及容量
 - 公网带宽
-
-计费方式包括：
-
-- 按量付费（小时）
-- 包年包月
-
-目前提供如下实例：
-
-| 规格族 | vCPU与内存 | 系统盘 | 公网带宽 |
-| --- | --- | --- | --- |
-| ecs.r6.xlarge | 内存型r6，4vCPU 32GiB | ESSD云盘 200GiB PL0 | 固定带宽1Mbps |
-
-预估费用在创建实例时可实时看到。
-如需更多规格、其他服务（如集群高可用性要求、企业级支持服务等），请联系我们 [mailto:xx@xx.com](mailto:xx@xx.com)。
-
-```
+- 系统盘资源
+- OSS 资源
 
 ## 部署架构
 
-`(部署概述内容)`
+![部署架构](service-arch.jpg)
 
-## RAM账号所需权限
-
-`(权限策略内容)`
-
-```
-eg: 
-
-Demo服务需要对ECS、VPC等资源进行访问和创建操作，若您使用RAM用户创建服务实例，需要在创建服务实例前，对使用的RAM用户的账号添加相应资源的权限。添加RAM权限的详细操作，请参见[为RAM用户授权](https://help.aliyun.com/document_detail/121945.html)。所需权限如下表所示。
-
-
-| 权限策略名称 | 备注 |
-| --- | --- |
-| AliyunECSFullAccess | 管理云服务器服务（ECS）的权限 |
-
-```
+## 参数说明
+| 参数组    | 参数项                     | 说明                                                                     |
+|--------|-------------------------|------------------------------------------------------------------------|
+| 服务实例   | 服务实例名称                  | 长度不超过64个字符，必须以英文字母开头，可包含数字、英文字母、短划线（-）和下划线（_）                          |
+|        | 地域                      | 服务实例部署的地域                                                              |
+| 付费类型配置 | 付费类型                    | 资源的计费类型：按量付费和包年包月                                                      |
+| 资源配置   | 实例类型                    | 可用区下可以使用的实例规格                                                          |
+|        | 实例密码                    | 长度8-30，必须包含三项（大写字母、小写字母、数字、 ()`~!@#$%^&*-+=&#124;{}[]:;'<>,.?/ 中的特殊符号） |
+|        | 公网访问选项                  | 是否启用公网访问                                                               |
+| 可用区配置  | 可用区                     | ECS实例所在可用区                                                             |
+|        | 专有网络选项                  | 可选择新建专有网络或复用已有专有网络                                                     |
+|        | 专有网络IPV4网段 (选中新建专有网络)   | 设置该专有网络所处网段                                                            |
+|        | 交换机子网网段 (选中新建专有网络)      | 设置该专有网络的交换机所处网段                                                        
+|        | VPC ID (选中已有专有网络)       | 资源所在VPC                                                                |
+|        | 交换机ID (选中已有专有网络)        | 资源所在交换机                                                                |
+| 存储配置 | OSS Bucket选项            | 可选择新建 Bucket 或复用已有 Bucket                                              |
+| | 已有 Bucket 名称(选中已有 Bucket) | 前置创建完毕的、无存储任何数据的空闲 Bucket 名称                                           |
+|| OSS AK选项 (选中已有 Bucket)  | 可选择新建 AK 或服用已有 AK，以便能访问到具体 Bucket                                      |
 
 ## 部署流程
+1. 访问计算巢[SkillHub社区版](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-75e59e84800449c4992b)，按提示填写部署参数：
+![步骤1](deploy_step_1.jpg)
+2. 参数填写完成后可以看到对应询价明细，确认参数后点击**下一步：确认订单**:
+![步骤2](deploy_step_2.jpg)
+3. 确认订单完成后同意服务协议并点击**立即创建**，进入部署阶段：
+![步骤3](deploy_step_3.jpg)
+4. 等待部署完成后就可以开始使用服务，进入服务实例详情点击 "公网地址/内网地址"，以访问 SkillHub Web 页面：
+![步骤4](deploy_step_4.jpg)
+5. Web 页面注册账号 (默认账号，用户名 **admin**，密码 **ChangeMe!2026**)：
+![步骤5](deploy_step_5.jpg)
+6. Web 页面即可执行发布 Skill、搜索 Skill、控制台管理 Skill 等操作：
+![步骤6](deploy_step_6.jpg)
 
-### 部署步骤
+## skillHub 与 clawhub 集成
 
-`(部署步骤内容)`
+当使用 openclaw，通常会基于 clawub 检索并安装具体 skill，以拓展 openclaw 能力。
 
+为实现 skillHub 与 clawhub 集成，具体需要做如下事情：
+
+- 更新 CLAWHUB_REGISTRY 环境变量
+
+shell 环境依次执行如下命令即可
 ```
-eg:
+# 编辑 ~/.bashrc
+echo 'export CLAWHUB_REGISTRY=http://114.55.168.250' >> ~/.bashrc
 
-1. 单击部署链接，进入服务实例部署界面，根据界面提示，填写参数完成部署。
-2. 补充示意图。
-```
-### 部署参数说明
+# 立即生效
+source ~/.bashrc
 
-`(部署参数说明内容)`
-
-```
-eg:
-
-您在创建服务实例的过程中，需要配置服务实例信息。下文介绍云XR实时渲染平台服务实例输入参数的详细信息。
-
-| 参数组 | 参数项 | 示例 | 说明 |
-| --- | --- | --- | --- |
-| 服务实例名称 |  | test | 实例的名称 |
-| 地域 |  | 华北2（北京） | 选中服务实例的地域，建议就近选中，以获取更好的网络延时。 |
-```
-
-### 验证结果
-
-`(验证结果内容)`
-
-```
-eg:
-
-1. 查看服务实例。服务实例创建成功后，部署时间大约需要2分钟。部署完成后，页面上可以看到对应的服务实例。 
-2. 通过服务实例访问TuGraph。进入到对应的服务实例后，可以在页面上获取到web、rpc、ssh共3种使用方式。
+# 验证
+echo $CLAWHUB_REGISTRY
 ```
 
-### 使用Demo
+注意：上述的 "export CLAWHUB_REGISTRY=http://114.55.168.250"，该内容取自 SkillHub 服务实例详情页的红框部分，实际配置时需按对应服务实例详情页面显示的内容，进行替换。
+![图例](claw_inte.jpg)
 
-`(服务使用说明内容)`
+- 查询并安装 skill
 
+以查询 Git 关键字的 skill，并安装 git-operations skill 为例，shell 环境依次执行如下命令即可，
 ```
-eg:
+# 搜索 Git 相关技能
+npx clawhub search git
 
-请访问Demo官网了解如何使用：[使用文档](https://www.aliyun.com)
+# 查看详细信息
+npx clawhub info git-operations
+
+# 安装单个技能
+npx clawhub install git-operations
 ```
-
-## 问题排查
-
-`(服务使用说明内容)`
-
-```
-eg:
-
-请访问[Demo的问题排查链接](https://www.aliyun.com)获取帮助。
-```
-
-## 联系我们
-
-欢迎访问Demo官网（[https://www.aliyun.com](https://www.aliyun.com)）了解更多信息。
-
-联系邮箱：[https://www.aliyun.com](mailto:https://www.aliyun.com)
-
-社区版开源地址：[https://github.com/](https://github.com/)
-
-扫码关注微信公众号，技术博客、活动通知不容错过：
-
-`(添加二维码图片)`
