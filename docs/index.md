@@ -28,48 +28,7 @@ SkillHub 社区版在计算巢部署的费用主要涉及：
 
 ## 部署架构
 
-```mermaid
-graph TB
-    subgraph Internet[互联网]
-        User[用户浏览器]
-    end
-    
-    subgraph VPC[VPC 专有网络]
-        subgraph VSwitch[VSwitch 交换机]
-            subgraph SG[Security Group 安全组]
-                subgraph ECS[ECS Instance 云服务器实例]
-                    Docker[Docker Compose]
-                    SkillHub[SkillHub 服务]
-                    PostgreSQL[(PostgreSQL 数据库)]
-                    Redis[(Redis 缓存)]
-                end
-            end
-        end
-    end
-    
-    subgraph OSS[对象存储 OSS]
-        Bucket[OSS Bucket]
-    end
-    
-    User -->|HTTPS/HTTP 公网访问| VPC
-    VPC --> VSwitch
-    VSwitch --> SG
-    SG --> ECS
-    Docker --> SkillHub
-    SkillHub --> PostgreSQL
-    SkillHub --> Redis
-    SkillHub -->|存储 Skill 文件| Bucket
-    
-    style User fill:#e1f5ff
-    style VPC fill:#e8f5e9
-    style VSwitch fill:#e1f5ff
-    style SG fill:#fce4ec
-    style ECS fill:#f3e5f5
-    style SkillHub fill:#fff4e1
-    style PostgreSQL fill:#f3e5f5
-    style Redis fill:#fce4ec
-    style Bucket fill:#e0f2f1
-```
+![部署架构](service_arch.jpg)
 
 ## 参数说明
 | 参数组    | 参数项                     | 说明                                                                     |

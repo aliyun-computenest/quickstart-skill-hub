@@ -40,36 +40,7 @@ SkillHub 集群版在计算巢部署的费用主要涉及：
 
 ## 部署架构
 
-```mermaid
-graph TB
-    User[用户浏览器] -->|HTTPS/HTTP| LB[负载均衡 SLB]
-    LB -->|流量分发| K8s[Kubernetes 集群 ACK/ACS]
-    
-    subgraph "Kubernetes 集群"
-        K8s -->|调度| Pod1[SkillHub Pod 1]
-        K8s -->|调度| Pod2[SkillHub Pod 2]
-        K8s -->|调度| Pod3[SkillHub Pod N]
-        
-        Pod1 -->|读写| Redis[Redis 缓存集群]
-        Pod2 -->|读写| Redis
-        Pod3 -->|读写| Redis
-        
-        Pod1 -->|读写| PG[(PostgreSQL 数据库)]
-        Pod2 -->|读写| PG
-        Pod3 -->|读写| PG
-        
-        Pod1 -->|读写| OSS[OSS 对象存储]
-        Pod2 -->|读写| OSS
-        Pod3 -->|读写| OSS
-    end
-    
-    style User fill:#e1f5ff
-    style LB fill:#fff4e1
-    style K8s fill:#e8f5e9
-    style Redis fill:#fce4ec
-    style PG fill:#f3e5f5
-    style OSS fill:#e0f2f1
-```
+![部署架构](cluster_service_arch.jpg)
 
 ## 参数说明
 
