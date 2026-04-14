@@ -28,7 +28,7 @@ SkillHub 社区版在计算巢部署的费用主要涉及：
 
 ## 部署架构
 
-![部署架构](service_arch.jpg)
+![部署架构](service_arch_1.jpg)
 
 ## 参数说明
 | 参数组    | 参数项                     | 说明                                                                     |
