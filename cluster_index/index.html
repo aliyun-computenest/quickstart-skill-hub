@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="计算巢是阿里云开放给企业应用服务商的服务管理平台。服务商能够在计算巢上发布私有化部署服务，为其客户提供云上软件一键部署的能力；同时也支持全托管模式的服务，赋能服务商托管其客户资源。">
+  <title>Cluster index - Aliyun 计算巢 x Demo</title>
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  
+
+  
+
+  
+  
+
+  
+    <script src="../search/main.js"></script>
+  
+
+  
+
+  <script src="../js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-inner">
+        <div class="logo">
+          <img src="./img/logo-2x.png">
+        </div>
+        <div class="nav-list">
+          <ul>
+          
+              <li><a href="#_1">概述</a></li>
+              
+          
+              <li><a href="#_2">前提条件</a></li>
+              
+          
+              <li><a href="#_3">计费说明</a></li>
+              
+          
+              <li><a href="#_4">部署架构</a></li>
+              
+          
+              <li><a href="#_5">参数说明</a></li>
+              
+                  <li><a href="#_6">集群配置</a></li>
+                  
+              
+                  <li><a href="#_7">网络配置</a></li>
+                  
+              
+                  <li><a href="#_8">资源配置</a></li>
+                  
+              
+                  <li><a href="#_9">数据库配置</a></li>
+                  
+              
+                  <li><a href="#skillhub">SkillHub 配置</a></li>
+                  
+              
+                  <li><a href="#oss">OSS 存储配置</a></li>
+                  
+              
+          
+              <li><a href="#_10">部署流程</a></li>
+              
+          
+              <li><a href="#skillhub-clawhub">skillHub 与 clawhub 集成</a></li>
+              
+          
+              <li><a href="#bashrc">编辑 ~/.bashrc</a></li>
+              
+          
+              <li><a href="#_11">立即生效</a></li>
+              
+          
+              <li><a href="#_12">验证</a></li>
+              
+          
+              <li><a href="#git">搜索 Git 相关技能</a></li>
+              
+          
+              <li><a href="#_13">查看详细信息</a></li>
+              
+          
+              <li><a href="#_14">安装单个技能</a></li>
+              
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="content theme-github">
+      
+      <div class="content-inner">        
+        
+        <h2 id="_1">概述</h2>
+<p>SkillHub 是一个企业级 Agent Skill 注册中心，它建立在科大讯飞开源产品 <a href="https://github.com/iflytek/skillhub/tree/main">skillhub</a> 基础之上，可用于发布、发现、管理可复用的 SKILL。</p>
+<p>本方式提供部署集群版 SkillHub 的解决方案，其底层通过 Kubernetes 集群（支持 ACK 和 ACS）进行部署，具备高可用、可伸缩的特性，适合生产环境下使用。</p>
+<p>相比单机版，集群版具有以下优势：
+- <strong>高可用性</strong>：多节点部署，避免单点故障
+- <strong>弹性伸缩</strong>：支持根据负载自动扩缩容
+- <strong>生产就绪</strong>：适合企业级生产环境使用
+- <strong>统一管理</strong>：集中化的集群管理和监控
+- <strong>数据安全</strong>：独立的数据库实例保障数据安全</p>
+<h2 id="_2">前提条件</h2>
+<p>部署 SkillHub 集群版服务实例，需要对部分阿里云资源进行访问和创建操作。因此您的账号需要包含如下资源的权限。</p>
+<p><strong>说明</strong>：当您的账号是RAM账号时，才需要添加此权限。</p>
+<table>
+<thead>
+<tr>
+<th>权限策略名称</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AliyunECSFullAccess</td>
+<td>管理云服务器服务（ECS）的权限</td>
+</tr>
+<tr>
+<td>AliyunVPCFullAccess</td>
+<td>管理专有网络（VPC）的权限</td>
+</tr>
+<tr>
+<td>AliyunROSFullAccess</td>
+<td>管理资源编排服务（ROS）的权限</td>
+</tr>
+<tr>
+<td>AliyunComputeNestUserFullAccess</td>
+<td>管理计算巢服务（ComputeNest）的用户侧权限</td>
+</tr>
+<tr>
+<td>AliyunCSFullAccess</td>
+<td>管理容器服务 Kubernetes 版（CS）的权限</td>
+</tr>
+<tr>
+<td>AliyunOSSFullAccess</td>
+<td>管理对象存储服务（OSS）的权限</td>
+</tr>
+<tr>
+<td>AliyunRDSFullAccess</td>
+<td>管理云数据库服务（RDS）的权限</td>
+</tr>
+<tr>
+<td>AliyunKvstoreFullAccess</td>
+<td>管理云数据库Tair（兼容 Redis）的权限</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">计费说明</h2>
+<p>SkillHub 集群版在计算巢部署的费用主要涉及：</p>
+<ul>
+<li>集群资源费用（ACK 集群Worker节点或 ACS 实例）</li>
+<li>所选vCPU与内存规格</li>
+<li>公网带宽</li>
+<li>系统盘资源</li>
+<li>数据库资源（Redis、PostgreSQL）</li>
+<li>存储资源</li>
+</ul>
+<h2 id="_4">部署架构</h2>
+<p><img alt="部署架构" src="../cluster_service_arch.jpg" /></p>
+<h2 id="_5">参数说明</h2>
+<h3 id="_6">集群配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>集群选项</td>
+<td>集群类型</td>
+<td>支持新建ACK集群、新建ACS集群或使用现有集群</td>
+</tr>
+<tr>
+<td></td>
+<td>Kubernetes集群ID</td>
+<td>使用现有集群时需指定集群ID</td>
+</tr>
+<tr>
+<td>可用区配置</td>
+<td>可用区1 (新建集群时)</td>
+<td>主可用区，用于部署集群节点或实例</td>
+</tr>
+<tr>
+<td></td>
+<td>可用区2 (新建集群时)</td>
+<td>备可用区，用于实现高可用部署</td>
+</tr>
+<tr>
+<td></td>
+<td>数据库可用区(使用现有集群时)</td>
+<td>指定Redis和PostgreSQL部署的可用区</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">网络配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络配置</td>
+<td>专有网络选项</td>
+<td>可选择新建专有网络或复用已有专有网络（新建集群时可选，使用现有集群时固定为已有专有网络）</td>
+</tr>
+<tr>
+<td></td>
+<td>VPC ID (新建集群+选择已有专有网络)</td>
+<td>已有VPC的实例ID，用于部署新建的K8s集群</td>
+</tr>
+<tr>
+<td></td>
+<td>VSwitch ID 1/2 (新建集群+选择已有专有网络)</td>
+<td>已有交换机实例ID，用于部署新建的K8s集群</td>
+</tr>
+<tr>
+<td></td>
+<td>VPC IPv4网段 (选择新建专有网络)</td>
+<td>新建VPC时的IP地址段范围，支持10.0.0.0/8、172.16.0.0/12、192.168.0.0/16</td>
+</tr>
+<tr>
+<td></td>
+<td>交换机子网网段1/2 (选择新建专有网络)</td>
+<td>新建VPC时交换机的子网网段</td>
+</tr>
+<tr>
+<td></td>
+<td>公网访问选项</td>
+<td>是否启用公网访问，用于外部访问SkillHub服务</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">资源配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>付费类型配置</td>
+<td>付费类型</td>
+<td>资源的计费类型：按量付费(PostPaid)和包年包月(PrePaid)</td>
+</tr>
+<tr>
+<td></td>
+<td>购买时长周期</td>
+<td>包年包月时的时长周期：月或年</td>
+</tr>
+<tr>
+<td></td>
+<td>购买时长</td>
+<td>包年包月时的具体时长，1-9个月或1-6年</td>
+</tr>
+<tr>
+<td>资源配置</td>
+<td>Worker节点规格</td>
+<td>ACK集群的Worker节点实例规格</td>
+</tr>
+<tr>
+<td></td>
+<td>实例节点数</td>
+<td>ACK集群的Worker节点数量，默认3个，支持1-5000</td>
+</tr>
+<tr>
+<td></td>
+<td>实例密码</td>
+<td>节点登录密码，长度8-30，必须包含三项（大写字母、小写字母、数字、特殊符号）</td>
+</tr>
+<tr>
+<td>网络插件</td>
+<td>ACK网络插件</td>
+<td>选择flannel或terway-eniip网络插件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">数据库配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储配置</td>
+<td>数据库可用区(使用现有集群时)</td>
+<td>指定Redis和PostgreSQL部署的可用区</td>
+</tr>
+<tr>
+<td></td>
+<td>数据库VPC ID (使用现有集群)</td>
+<td>指定Redis和PostgreSQL部署的VPC，必须与现有集群的VPC一致</td>
+</tr>
+<tr>
+<td></td>
+<td>数据库VSwitch ID (使用现有集群)</td>
+<td>指定Redis和PostgreSQL部署的交换机</td>
+</tr>
+<tr>
+<td></td>
+<td>Redis实例</td>
+<td>用于缓存和会话管理的Redis实例</td>
+</tr>
+<tr>
+<td></td>
+<td>PostgreSQL实例</td>
+<td>用于持久化存储的PostgreSQL数据库实例</td>
+</tr>
+</tbody>
+</table>
+<h3 id="skillhub">SkillHub 配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SkillHub配置</td>
+<td>管理员密码</td>
+<td>设置SkillHub管理员账号(admin)的登录密码</td>
+</tr>
+</tbody>
+</table>
+<h3 id="oss">OSS 存储配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数组</th>
+<th>参数项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储配置</td>
+<td>OSS Bucket选项</td>
+<td>可选择新建 Bucket 或复用已有 Bucket</td>
+</tr>
+<tr>
+<td></td>
+<td>已有 Bucket 名称(选中已有 Bucket)</td>
+<td>前置创建完毕的、无存储任何数据的空闲 Bucket 名称</td>
+</tr>
+<tr>
+<td></td>
+<td>OSS AK选项 (选中已有 Bucket)</td>
+<td>可选择新建 AK 或复用已有 AK，以便能访问到具体 Bucket</td>
+</tr>
+</tbody>
+</table>
+<p><strong>重要提示</strong>：使用现有集群时，数据库组件部署的VPC必须与Kubernetes集群的VPC保持一致，否则集群内无法通过内网访问Redis和PostgreSQL实例。</p>
+<h2 id="_10">部署流程</h2>
+<ol>
+<li>
+<p>访问计算巢 <a href="https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&amp;ServiceId=service-75e59e84800449c4992b">SkillHub集群版</a> 服务页面，按提示填写部署参数：
+<img alt="步骤1" src="../cluster_deploy_step_1.jpg" /></p>
+</li>
+<li>
+<p>参数填写完成后查看询价明细，确认参数无误后点击<strong>下一步：确认订单</strong>
+<img alt="步骤2" src="../cluster_deploy_step_2.jpg" /></p>
+</li>
+<li>
+<p>确认订单完成后同意服务协议并点击<strong>立即创建</strong>，进入部署阶段
+<img alt="步骤3" src="../cluster_deploy_step_3.jpg" /></p>
+</li>
+<li>
+<p>等待部署完成后进入服务实例详情页，获取访问地址
+<img alt="步骤4" src="../cluster_deploy_step_4.jpg" /></p>
+</li>
+<li>
+<p>通过浏览器访问 SkillHub Web 页面，注册或登录账号(默认账号，用户名 <strong>admin</strong>，密码是创建服务时自行设置的)
+<img alt="步骤5" src="../cluster_deploy_step_5.jpg" /></p>
+</li>
+<li>
+<p>登录后即可执行发布 Skill、搜索 Skill、控制台管理 Skill 等操作
+<img alt="步骤6" src="../cluster_deploy_step_6.jpg" /></p>
+</li>
+</ol>
+<h2 id="skillhub-clawhub">skillHub 与 clawhub 集成</h2>
+<p>当使用 openclaw，通常会基于 clawub 检索并安装具体 skill，以拓展 openclaw 能力。</p>
+<p>为实现 skillHub 与 clawhub 集成，具体需要做如下事情：</p>
+<ul>
+<li>
+<p>更新 CLAWHUB_REGISTRY 环境变量</p>
+<p>shell 环境依次执行如下命令即可
+```</p>
+<h1 id="bashrc">编辑 ~/.bashrc</h1>
+<p>echo 'export CLAWHUB_REGISTRY=http://114.55.168.250' &gt;&gt; ~/.bashrc</p>
+<h1 id="_11">立即生效</h1>
+<p>source ~/.bashrc</p>
+<h1 id="_12">验证</h1>
+<p>echo $CLAWHUB_REGISTRY
+```</p>
+<p>注意：上述的 "export CLAWHUB_REGISTRY=http://114.55.168.250"，该内容取自 SkillHub 服务实例详情页的红框部分，实际配置时需按对应服务实例详情页面显示的内容，进行替换。
+<img alt="图例" src="../claw_inte.jpg" /></p>
+</li>
+<li>
+<p>查询并安装 skill</p>
+<p>以查询 Git 关键字的 skill，并安装 git-operations skill 为例，shell 环境依次执行如下命令即可，
+```</p>
+<h1 id="git">搜索 Git 相关技能</h1>
+<p>npx clawhub search git</p>
+<h1 id="_13">查看详细信息</h1>
+<p>npx clawhub info git-operations</p>
+<h1 id="_14">安装单个技能</h1>
+<p>npx clawhub install git-operations
+```</p>
+</li>
+</ul>
+        
+      </div>
+
+      <div class="copyrights">© 2009-2022 Aliyun.com 版权所有</div>
+    </div>
+  </div>
+  
+  <!--
+  MkDocs version      : 1.6.1
+  Docs Build Date UTC : 2026-04-14 10:43:22.488271+00:00
+  -->
+</body>
+</html>
